@@ -1,6 +1,6 @@
 import RegisterFormZod from "./RegisterForrmZod/RegisterFormZod";
 
-export default function SignupPage() {
+export default function RegisterPage() {
   return (
     <div>
       <RegisterFormZod />
