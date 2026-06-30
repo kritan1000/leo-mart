@@ -59,10 +59,10 @@ export default function DashboardPage() {
                 This is your dashboard. You are successfully authenticated.
               </p>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="mt-4 sm:mt-0 flex flex-wrap gap-3 justify-center sm:justify-end">
               <Link
                 href="/profile"
-                className="inline-flex items-center gap-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white px-4 py-2.5 rounded-sm text-sm font-medium transition"
+                className="inline-flex items-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-sm text-sm font-medium transition"
               >
                 <Settings size={16} />
                 Manage Profile

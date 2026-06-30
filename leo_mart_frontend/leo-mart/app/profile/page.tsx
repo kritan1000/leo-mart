@@ -30,17 +30,23 @@ export default function ProfilePage() {
 
   // Initialize fields once user is loaded
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
-    } else if (user) {
+    if (user) {
       setFullname(user.fullname || "");
       setEmail(user.email || "");
       if (user.profilePicture) {
         setProfilePreview(user.profilePicture);
       }
     }
-  }, [user, loading, router]);
+  }, [user]);
 
+  // Redirect to login only after loading is complete and user is confirmed null
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [loading, user, router]);
+
+  // Always show loading while auth state is being determined
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5]">
@@ -48,6 +54,9 @@ export default function ProfilePage() {
       </div>
     );
   }
+
+  // Don't render anything if user is null (redirect is in progress)
+  if (!user) return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
