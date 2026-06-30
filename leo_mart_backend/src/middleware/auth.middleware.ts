@@ -15,21 +15,22 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-
-    if (!token) {
-      throw new Error('No token provided');
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, message: 'No token provided. Please log in.' });
     }
+
+    const token = authHeader.split(' ')[1];
 
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      throw new Error('JWT secret not configured');
+      return res.status(500).json({ success: false, message: 'Server configuration error.' });
     }
 
     const decoded = verify(token, secret);
     req.user = decoded;
     next();
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    return res.status(401).json({ success: false, message: 'Invalid or expired token. Please log in again.' });
   }
 };
