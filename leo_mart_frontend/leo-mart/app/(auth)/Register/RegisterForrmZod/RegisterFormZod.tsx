@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { RegisterFormData, registerSchema } from "../../_components/schema";
 import { LeoMartLogo } from "../../_components/type/AuthComponent";
-import { register as registerApi } from "@/lib/api/auth";
+import { registerUser } from "@/lib/actions/auth-action";
 
 export default function RegisterFormZod() {
   const router = useRouter();
@@ -36,13 +36,7 @@ export default function RegisterFormZod() {
     setErrorMsg("");
     setSuccessMsg("");
     try {
-      const payload = {
-        fullname: data.fullName,
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-      };
-      const res = await registerApi(payload);
+      const res = await registerUser(data);
       if (res.success) {
         setSuccessMsg("Registration successful! Redirecting to login...");
         setTimeout(() => {
