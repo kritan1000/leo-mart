@@ -9,15 +9,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { LoginFormData, loginSchema } from "../../_components/schema";
 import { LeoMartLogo } from "../../_components/type/AuthComponent";
-import { login } from "@/lib/api/auth";
-import { setTokenCookie, setUserInfoCookie } from "@/lib/cookies";
-import { useAuth } from "@/lib/context/AuthContext";
+import { loginUser } from "@/lib/actions/auth-action";
 
 export default function LoginFormZod() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const { checkAuth } = useAuth();
 
   const {
     register,
@@ -25,7 +22,6 @@ export default function LoginFormZod() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-
     defaultValues: {
       email: "",
       password: "",
@@ -35,12 +31,17 @@ export default function LoginFormZod() {
   const onSubmit = async (data: LoginFormData) => {
     setErrorMsg("");
     try {
-      const res = await login(data);
-      if (res.success && res.data) {
-        await setTokenCookie(res.data.token);
-        await setUserInfoCookie(res.data.user);
-        await checkAuth();
-        router.push("/dashboard");
+      // loginUser is a server action — it sets auth_token cookie server-side
+      const res = await loginUser(data);
+      if (res.success) {
+        // refresh so Next.js picks up the new cookie, then navigate
+        router.refresh();
+        const role = res.data?.user?.role;
+        if (role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/dashboard");
+        }
       } else {
         setErrorMsg(res.message || "Invalid email or password");
       }
