@@ -5,6 +5,7 @@ import cors from "cors";
 import userRoutes from "./routes/user_route";
 import blogRoutes from "./routes/blog_route";
 import userAdminRoutes from "./routes/user_admin_route";
+import productRoutes from "./routes/product_route";
 
 const app: Application = express();
 const corsOptions = {
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true })); //use form-urlencoded as reques
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/blogs", blogRoutes);
 app.use("/api/v1/admin/users", userAdminRoutes);
+app.use("/api/v1/products", productRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({ message: "Route Not Found" });
