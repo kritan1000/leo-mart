@@ -2,6 +2,7 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import { ApiResponseHelper } from "./utils/api-response";
 import { HttpException } from "./exceptions/http-exception";
 import cors from "cors";
+import path from "path";
 import userRoutes from "./routes/user_route";
 import blogRoutes from "./routes/blog_route";
 import userAdminRoutes from "./routes/user_admin_route";
@@ -20,6 +21,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json()); // use json as request
 app.use(express.urlencoded({ extended: true })); //use form-urlencoded as request
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/blogs", blogRoutes);
