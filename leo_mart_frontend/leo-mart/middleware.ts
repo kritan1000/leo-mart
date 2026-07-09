@@ -63,9 +63,9 @@ export function middleware(request: NextRequest) {
   }
 
   // --- Regular user ---
-  // User visiting login/register → go to user dashboard
+  // User visiting login/register → go to homepage
   if (isPublicRoute) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
   // User trying to access admin routes → redirect to user dashboard
   if (isAdminRoute) {

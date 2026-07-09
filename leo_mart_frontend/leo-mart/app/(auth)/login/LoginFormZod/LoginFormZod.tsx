@@ -10,9 +10,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "../../_components/schema";
 import { LeoMartLogo } from "../../_components/type/AuthComponent";
 import { loginUser } from "@/lib/actions/auth-action";
+import { useAuth } from "@/lib/context/AuthContext";
 
 export default function LoginFormZod() {
   const router = useRouter();
+  const { checkAuth } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -34,13 +36,15 @@ export default function LoginFormZod() {
       // loginUser is a server action — it sets auth_token cookie server-side
       const res = await loginUser(data);
       if (res.success) {
+        // Sync context so client state is populated immediately without requiring refresh
+        await checkAuth();
         // refresh so Next.js picks up the new cookie, then navigate
         router.refresh();
         const role = res.data?.user?.role;
         if (role === "admin") {
           router.push("/admin/dashboard");
         } else {
-          router.push("/dashboard");
+          router.push("/");
         }
       } else {
         setErrorMsg(res.message || "Invalid email or password");
