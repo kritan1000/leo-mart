@@ -1,8 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { ShoppingCart, User, Download, Building, Mail, Phone, MessageSquare, Send, Sparkles, ShieldAlert } from "lucide-react";
+import { ShoppingCart, User, Download, Sparkles } from "lucide-react";
 import { fetchProductsAction } from "@/lib/actions/product-action";
 import { LeoMartLogo } from "../(auth)/_components/type/AuthComponent";
+import QuotationForm from "./_components/QuotationForm";
 
 export default async function WholesalePage() {
   // Fetch products that support bulk/wholesale deals or all products
@@ -152,83 +153,8 @@ export default async function WholesalePage() {
             </div>
           </div>
 
-          {/* Request Quotation Form */}
-          <div className="bg-white border border-purple-100 rounded-3xl p-6 shadow-xl shadow-purple-500/5 h-fit space-y-6">
-            <div className="space-y-1">
-              <h2 className="text-lg font-bold text-gray-900 tracking-tight">Request Quotation</h2>
-              <p className="text-xs text-gray-400">Submit your sourcing list for customized discounts.</p>
-            </div>
-
-            <form className="space-y-4">
-              <div className="flex flex-col space-y-1">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Company Name</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400">
-                    <Building size={14} />
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="e.g. Alpine Treks Ltd."
-                    className="w-full border border-purple-100 pl-10 pr-4 py-2 rounded-xl text-xs text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-1">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Email Address</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400">
-                    <Mail size={14} />
-                  </span>
-                  <input
-                    type="email"
-                    placeholder="procurement@company.com"
-                    className="w-full border border-purple-100 pl-10 pr-4 py-2 rounded-xl text-xs text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-1">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phone / WhatsApp</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400">
-                    <Phone size={14} />
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="+977-98XXXXXXXX"
-                    className="w-full border border-purple-100 pl-10 pr-4 py-2 rounded-xl text-xs text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-1">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Required Items & Quantity</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-3 text-purple-400">
-                    <MessageSquare size={14} />
-                  </span>
-                  <textarea
-                    rows={4}
-                    placeholder="e.g. 50 bags of Jasmine Rice, 10 cartons of Sunflower oil..."
-                    className="w-full border border-purple-100 pl-10 pr-4 py-2 rounded-xl text-xs text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition resize-none"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  alert("Your quotation request has been sent! Our wholesale representative will contact you shortly.");
-                }}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md shadow-purple-500/10 active:scale-95 transition flex items-center justify-center gap-1.5"
-              >
-                <Send size={12} />
-                Send Request
-              </button>
-            </form>
-          </div>
+          {/* Interactive Request Quotation Form */}
+          <QuotationForm />
         </section>
       </main>
 
