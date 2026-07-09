@@ -1,10 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { Users, UserPlus, Shield, UserCheck, ShoppingBag, Plus, Sparkles } from "lucide-react";
+import { Users, UserPlus, Shield, UserCheck, ShoppingBag, Plus, Sparkles, MessageSquare } from "lucide-react";
 import { fetchUsersAction } from "@/lib/actions/user-action";
 import { fetchProductsAction } from "@/lib/actions/product-action";
+import { fetchQuotationsAction } from "@/lib/actions/quotation-action";
 import UserTable from "../users/_components/UserTable";
 import ProductTable from "../products/_components/ProductTable";
+import QuotationTable from "../quotations/_components/QuotationTable";
 import { LeoMartLogo } from "../../(auth)/_components/type/AuthComponent";
 import LogoutButton from "../_components/LogoutButton";
 
@@ -29,11 +31,17 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
   // Call API depending on selected tab
   let usersData = { data: [], total: 0, totalPages: 0 };
   let productsData = { data: [], total: 0, totalPages: 0 };
+  let quotationsData = { data: [], total: 0, totalPages: 0 };
 
   if (tab === "products") {
     const res = await fetchProductsAction({ page, size, search });
     if (res.success && res.data) {
       productsData = res.data;
+    }
+  } else if (tab === "quotes") {
+    const res = await fetchQuotationsAction({ page, size });
+    if (res.success && res.data) {
+      quotationsData = res.data;
     }
   } else {
     const res = await fetchUsersAction({ page, size, search });
@@ -42,12 +50,15 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
     }
   }
 
-  // Always fetch total users/products to show on the header stats
+  // Always fetch total counts to show on the header stats
   const totalUsersRes = await fetchUsersAction({ page: 1, size: 1 });
   const totalUsers = totalUsersRes.success && totalUsersRes.data ? totalUsersRes.data.total : 0;
 
   const totalProductsRes = await fetchProductsAction({ page: 1, size: 1 });
   const totalProducts = totalProductsRes.success && totalProductsRes.data ? totalProductsRes.data.total : 0;
+
+  const totalQuotesRes = await fetchQuotationsAction({ page: 1, size: 1 });
+  const totalQuotes = totalQuotesRes.success && totalQuotesRes.data ? totalQuotesRes.data.total : 0;
 
   return (
     <div className="min-h-screen bg-[#FAFAFC] flex flex-col text-black font-sans">
@@ -71,7 +82,7 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Admin Console</h1>
-            <p className="text-sm text-gray-500">Manage user authorization and product inventory catalogs.</p>
+            <p className="text-sm text-gray-500">Manage user authorization, products, and wholesale quotations.</p>
           </div>
 
           {/* Quick Stats Banner */}
@@ -88,6 +99,13 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
               <div>
                 <span className="text-[10px] text-gray-400 font-bold uppercase block">Products</span>
                 <span className="text-sm font-bold text-gray-800">{totalProducts}</span>
+              </div>
+            </div>
+            <div className="bg-white border border-purple-100/60 rounded-xl px-4 py-2.5 flex items-center gap-3 shadow-sm">
+              <MessageSquare className="text-purple-600" size={20} />
+              <div>
+                <span className="text-[10px] text-gray-400 font-bold uppercase block">Requests</span>
+                <span className="text-sm font-bold text-gray-800">{totalQuotes}</span>
               </div>
             </div>
           </div>
@@ -117,6 +135,17 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
             <ShoppingBag size={16} />
             Product Inventory
           </Link>
+          <Link
+            href="/admin/dashboard?tab=quotes"
+            className={`px-6 py-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+              tab === "quotes"
+                ? "border-purple-600 text-purple-600"
+                : "border-transparent text-gray-500 hover:text-gray-800"
+            }`}
+          >
+            <MessageSquare size={16} />
+            Wholesale Quotes
+          </Link>
         </div>
 
         {/* Table Content Render */}
@@ -142,6 +171,14 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
                 initialSearch={search}
               />
             </>
+          ) : tab === "quotes" ? (
+            <QuotationTable
+              quotations={quotationsData.data || []}
+              total={quotationsData.total || 0}
+              totalPages={quotationsData.totalPages || 0}
+              currentPage={page}
+              pageSize={size}
+            />
           ) : (
             <>
               <div className="flex items-center justify-between">
