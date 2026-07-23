@@ -64,3 +64,40 @@ export async function loginUser(data: LoginFormData) {
     return { success: false, message: error.message || "Login failed" };
   }
 }
+
+export async function applyBusinessAccountAction(data: {
+  businessName: string;
+  registrationNo: string;
+  businessType?: string;
+}) {
+  try {
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
+
+    if (!token) {
+      return { success: false, message: "Please log in to apply for a Business Account." };
+    }
+
+    const res = await fetch(`${BACKEND_URL}/api/v1/auth/business-account`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      return {
+        success: true,
+        message: result.message || "Business account application submitted!",
+        data: result.data,
+      };
+    }
+    return { success: false, message: result.message || "Failed to submit application." };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Network error" };
+  }
+}
