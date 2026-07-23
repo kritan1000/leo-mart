@@ -145,14 +145,29 @@ export default function CatalogClient({
     );
   };
 
+  // Sync cart to localStorage whenever cart changes
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("leo_mart_cart");
+      if (saved && cart.length === 0) {
+        setCart(JSON.parse(saved));
+      }
+    } catch (e) {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("leo_mart_cart", JSON.stringify(cart));
+    } catch (e) {}
+  }, [cart]);
+
   const removeFromCart = (productId: string) => {
     setCart((prev) => prev.filter((item) => item.product._id !== productId));
   };
 
   const checkout = () => {
-    alert("Checkout Successful! Thank you for ordering from Leo Mart. Your groceries will be delivered soon.");
-    setCart([]);
     setIsCartOpen(false);
+    router.push("/checkout");
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
