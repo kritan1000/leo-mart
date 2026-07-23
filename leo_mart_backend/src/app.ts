@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Application, NextFunction, Request, Response } from "express";
 import { ApiResponseHelper } from "./utils/api-response";
 import { HttpException } from "./exceptions/http-exception";

@@ -39,6 +39,7 @@ export interface IOrder extends Document {
   purchaseOrderId?: string;
   paymentDate?: Date;
   khaltiResponse?: any;
+  earnedPoints?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -93,6 +94,7 @@ const OrderSchema: Schema = new Schema<IOrder>(
     purchaseOrderId: { type: String },
     paymentDate: { type: Date },
     khaltiResponse: { type: Schema.Types.Mixed },
+    earnedPoints: { type: Number, default: 0 },
   },
   {
     timestamps: true,

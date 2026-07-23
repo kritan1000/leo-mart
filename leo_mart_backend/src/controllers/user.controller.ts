@@ -212,4 +212,40 @@ export class UserController {
       next(error);
     }
   }
+
+  async applyBusinessAccount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+
+      const { businessName, registrationNo, businessType } = req.body;
+      if (!businessName || !registrationNo) {
+        return res.status(400).json({
+          success: false,
+          message: "Business Name and Registration/VAT Number are required.",
+        });
+      }
+
+      const updatedUser = await userService.updateUser(userId, {
+        businessAccount: {
+          status: "pending",
+          businessName,
+          registrationNo,
+          businessType: businessType || "Retailer",
+          appliedAt: new Date(),
+        },
+      } as any);
+
+      return res.status(200).json({
+        success: true,
+        message: "Business Account application submitted successfully!",
+        data: updatedUser,
+      });
+    } catch (error) {
+      console.error("[APPLY BUSINESS ACCOUNT ERROR]", error);
+      next(error);
+    }
+  }
 }

@@ -3,6 +3,7 @@ import { khaltiConfig } from "../config/khalti";
 import Product from "../models/product_model";
 import Order, { IOrder } from "../models/order_model";
 import PendingPayment from "../models/pending_payment_model";
+import User from "../models/user_model";
 import mongoose from "mongoose";
 
 export interface InitiateKhaltiInput {
@@ -93,9 +94,9 @@ export class KhaltiService {
       },
     };
 
-    const authHeader = khaltiConfig.secretKey.startsWith("Key ")
-      ? khaltiConfig.secretKey
-      : `Key ${khaltiConfig.secretKey}`;
+    const rawSecretKey = (process.env.KHALTI_SECRET_KEY || khaltiConfig.secretKey || "Key live_secret_key_68791341fdd94846a146f0457ff7b455").trim();
+    const cleanKey = rawSecretKey.replace(/^key\s+/i, "");
+    const authHeader = `Key ${cleanKey}`;
 
     // 2. Call Khalti Initiate API
     const response = await axios.post(khaltiConfig.initiateUrl, payload, {
@@ -153,9 +154,9 @@ export class KhaltiService {
       };
     }
 
-    const authHeader = khaltiConfig.secretKey.startsWith("Key ")
-      ? khaltiConfig.secretKey
-      : `Key ${khaltiConfig.secretKey}`;
+    const rawSecretKey = (process.env.KHALTI_SECRET_KEY || khaltiConfig.secretKey || "Key live_secret_key_68791341fdd94846a146f0457ff7b455").trim();
+    const cleanKey = rawSecretKey.replace(/^key\s+/i, "");
+    const authHeader = `Key ${cleanKey}`;
 
     // 1. Call Khalti Lookup API
     const response = await axios.post(
@@ -230,8 +231,17 @@ export class KhaltiService {
       };
     }
 
+    // Calculate earned loyalty reward points
+    const earnedPoints = Math.floor(orderData.totalAmount / 100);
+    orderData.earnedPoints = earnedPoints;
+
     // 3. Save Order in MongoDB
     const newOrder = await Order.create(orderData);
+
+    // Update user's loyalty points balance if userId exists
+    if (orderData.user) {
+      await User.findByIdAndUpdate(orderData.user, { $inc: { loyaltyPoints: earnedPoints } });
+    }
 
     // Delete pending payment
     if (pending) {

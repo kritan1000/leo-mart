@@ -1,5 +1,6 @@
 import Order, { IOrder } from "../models/order_model";
 import Product from "../models/product_model";
+import User from "../models/user_model";
 import mongoose from "mongoose";
 
 export interface CreateCodOrderInput {
@@ -62,6 +63,9 @@ export class OrderService {
     const discount = 0;
     const totalAmount = subtotal + deliveryCharge - discount;
 
+    // Calculate loyalty reward points (1 point for every 100 NPR)
+    const earnedPoints = Math.floor(totalAmount / 100);
+
     const purchaseOrderId = `ORD-COD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     const newOrder = await Order.create({
@@ -77,7 +81,13 @@ export class OrderService {
       paymentStatus: "Pending",
       orderStatus: "Pending",
       purchaseOrderId,
+      earnedPoints,
     });
+
+    // Update user's loyalty points balance
+    if (userId) {
+      await User.findByIdAndUpdate(userId, { $inc: { loyaltyPoints: earnedPoints } });
+    }
 
     return newOrder;
   }
