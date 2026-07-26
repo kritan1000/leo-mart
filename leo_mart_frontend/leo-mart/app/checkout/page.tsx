@@ -6,21 +6,14 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ShoppingBag, ShieldCheck, MapPin, User, Mail, Phone, CreditCard, Banknote, Loader2, CheckCircle2 } from "lucide-react";
 import { LeoMartLogo } from "../(auth)/_components/type/AuthComponent";
 import { useAuth } from "@/lib/context/AuthContext";
+import { useCart } from "@/lib/context/CartContext";
 import { initiateKhaltiAction } from "@/lib/actions/payment-action";
 import { createCodOrderAction } from "@/lib/actions/order-action";
-
-interface CartItem {
-  product: any;
-  quantity: number;
-}
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { user } = useAuth();
-
-  // Cart state loaded from localStorage
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { cart, clearCart, cartTotal } = useCart();
 
   // Form Fields
   const [fullname, setFullname] = useState("");
@@ -41,19 +34,6 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  useEffect(() => {
-    // Load cart items from localStorage
-    try {
-      const savedCart = localStorage.getItem("leo_mart_cart");
-      if (savedCart) {
-        setCart(JSON.parse(savedCart));
-      }
-    } catch (e) {
-      console.error("Error reading cart from localStorage:", e);
-    }
-    setIsLoaded(true);
-  }, []);
-
   // Autofill user details if logged in
   useEffect(() => {
     if (user) {
@@ -62,7 +42,7 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
-  const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const subtotal = cartTotal;
   const deliveryCharge = cart.length > 0 ? 100 : 0;
   const totalAmount = subtotal + deliveryCharge;
 
@@ -128,8 +108,7 @@ export default function CheckoutPage() {
         });
 
         if (res.success && res.order) {
-          // Clear cart
-          localStorage.removeItem("leo_mart_cart");
+          clearCart();
           router.push(`/order-success?orderId=${res.order._id}`);
         } else {
           setErrorMsg(res.message || "Failed to place Cash on Delivery order.");
@@ -162,14 +141,6 @@ export default function CheckoutPage() {
       setIsProcessing(false);
     }
   };
-
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-[#FAFAFC] flex items-center justify-center">
-        <Loader2 className="animate-spin text-purple-600" size={32} />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-black font-sans flex flex-col">
