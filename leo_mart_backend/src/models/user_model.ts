@@ -3,6 +3,7 @@ import { UserType } from "../types/user_type";
 
 export interface IUser extends UserType, Document {
   _id: mongoose.Types.ObjectId;
+  profilePicture: string;
   loyaltyPoints: number;
   businessAccount?: {
     status: "none" | "pending" | "approved" | "rejected";
@@ -24,6 +25,7 @@ const UserModelSchema: Schema = new Schema<IUser>(
     lastName: { type: String, required: false },
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "user"], default: "user" },
+    profilePicture: { type: String, default: "" },
     loyaltyPoints: { type: Number, default: 0 },
     businessAccount: {
       status: {
