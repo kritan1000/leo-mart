@@ -99,4 +99,31 @@ export class OrderService {
   public async getOrdersByUser(userId: string): Promise<IOrder[]> {
     return Order.find({ user: new mongoose.Types.ObjectId(userId) }).sort({ createdAt: -1 });
   }
+
+  public async getAllOrders(
+    page: number = 1,
+    size: number = 20,
+    status?: string
+  ): Promise<{ data: IOrder[]; total: number }> {
+    const query: any = {};
+    if (status) query.orderStatus = status;
+    const skip = (page - 1) * size;
+    const total = await Order.countDocuments(query);
+    const data = await Order.find(query)
+      .populate("user", "fullname email")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(size);
+    return { data, total };
+  }
+
+  public async updateOrderStatus(
+    id: string,
+    orderStatus: string,
+    paymentStatus?: string
+  ): Promise<IOrder | null> {
+    const update: any = { orderStatus };
+    if (paymentStatus) update.paymentStatus = paymentStatus;
+    return Order.findByIdAndUpdate(id, update, { new: true });
+  }
 }
