@@ -202,13 +202,33 @@ export default function CreateProductPage() {
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Category
                 </label>
-                <input
-                  type="text"
+                <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  placeholder="e.g. Rice & Grains"
                   className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
-                />
+                >
+                  <option value="">Select Category</option>
+                  <option value="Noodles & Pasta">Noodles & Pasta</option>
+                  <option value="Rice & Grains">Rice & Grains</option>
+                  <option value="Flour & Baking">Flour & Baking</option>
+                  <option value="Lentils & Pulses">Lentils & Pulses</option>
+                  <option value="Spices & Masala">Spices & Masala</option>
+                  <option value="Cooking Oil & Ghee">Cooking Oil & Ghee</option>
+                  <option value="Tea & Coffee">Tea & Coffee</option>
+                  <option value="Dairy Products">Dairy Products</option>
+                  <option value="Beverages & Drinks">Beverages & Drinks</option>
+                  <option value="Snacks & Chips">Snacks & Chips</option>
+                  <option value="Biscuits & Cookies">Biscuits & Cookies</option>
+                  <option value="Bread & Bakery">Bread & Bakery</option>
+                  <option value="Ready to Eat">Ready to Eat</option>
+                  <option value="Cleaning & Household">Cleaning & Household</option>
+                  <option value="Personal Care">Personal Care</option>
+                  <option value="Baby Care">Baby Care</option>
+                  <option value="Dry Fruits & Nuts">Dry Fruits & Nuts</option>
+                  <option value="Pickles & Chutneys">Pickles & Chutneys</option>
+                  <option value="Sugar & Sweeteners">Sugar & Sweeteners</option>
+                  <option value="Salt & Condiments">Salt & Condiments</option>
+                </select>
               </div>
 
               <div className="flex flex-col space-y-1">
