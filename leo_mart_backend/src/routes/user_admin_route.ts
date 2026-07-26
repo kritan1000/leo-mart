@@ -7,6 +7,7 @@ const userController = new UserController();
 const router = Router();
 
 // Admin User CRUD routes
+router.get("/business-accounts", authMiddleware, adminMiddleware, userController.adminGetBusinessAccounts.bind(userController));
 router.get("/", authMiddleware, adminMiddleware, userController.adminGetUsers.bind(userController));
 router.get("/:id", authMiddleware, adminMiddleware, userController.adminGetUserById.bind(userController));
 router.post("/", authMiddleware, adminMiddleware, userController.adminCreateUser.bind(userController));
