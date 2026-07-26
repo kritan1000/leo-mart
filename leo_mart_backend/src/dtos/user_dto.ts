@@ -41,15 +41,22 @@ export type AdminCreateUserDto = z.infer<typeof AdminCreateUserDto>;
 export const AdminUpdateUserDto = z
   .object({
     fullname: z.string().min(3).optional(),
-    fullName: z.string().min(3).optional(), // accept camelCase from Postman too
+    fullName: z.string().min(3).optional(),
     email: z.string().email().optional(),
     username: z.string().min(3).optional(),
     role: z.enum(["admin", "user"]).optional(),
     password: z.string().min(6).optional(),
+    businessAccount: z
+      .object({
+        status: z.enum(["none", "pending", "approved", "rejected"]),
+        businessName: z.string().optional(),
+        registrationNo: z.string().optional(),
+        businessType: z.string().optional(),
+      })
+      .optional(),
   })
   .transform((data) => ({
     ...data,
-    // normalize: only set fullname if either was provided
     fullname: data.fullname || data.fullName || undefined,
   }));
 export type AdminUpdateUserDto = z.infer<typeof AdminUpdateUserDto>;
