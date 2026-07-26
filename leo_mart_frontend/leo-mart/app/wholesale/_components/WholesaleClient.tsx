@@ -56,9 +56,6 @@ export default function WholesaleClient({ products }: Props) {
           </Link>
           <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-gray-600">
             <Link href="/groceries" className="hover:text-purple-600 transition">
-              Categories
-            </Link>
-            <Link href="/groceries" className="hover:text-purple-600 transition">
               Groceries
             </Link>
             <Link href="/wholesale" className="text-purple-600 font-semibold">
