@@ -60,4 +60,54 @@ export class OrderController {
       next(error);
     }
   }
+
+  public static async getOrdersByUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+      const orders = await orderService.getOrdersByUser(userId);
+      return res.status(200).json({ success: true, data: orders });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async getAllOrders(req: Request, res: Response, next: NextFunction) {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const size = parseInt(req.query.size as string) || 20;
+      const status = (req.query.status as string) || undefined;
+      const result = await orderService.getAllOrders(page, size, status);
+      return res.status(200).json({
+        success: true,
+        data: result.data,
+        meta: { page, size, total: result.total, totalPages: Math.ceil(result.total / size) },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async updateOrderStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { orderStatus, paymentStatus } = req.body;
+      if (!orderStatus) {
+        return res.status(400).json({ success: false, message: "orderStatus is required" });
+      }
+      const validStatuses = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
+      if (!validStatuses.includes(orderStatus)) {
+        return res.status(400).json({ success: false, message: `Invalid orderStatus. Must be one of: ${validStatuses.join(", ")}` });
+      }
+      const order = await orderService.updateOrderStatus(id, orderStatus, paymentStatus);
+      if (!order) {
+        return res.status(404).json({ success: false, message: "Order not found" });
+      }
+      return res.status(200).json({ success: true, message: "Order status updated", order });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
