@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
+import { SECRET_KEY } from '../config/constant';
 
 declare global {
   namespace Express {
@@ -21,16 +22,27 @@ export const authMiddleware = (
     }
 
     const token = authHeader.split(' ')[1];
-
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      return res.status(500).json({ success: false, message: 'Server configuration error.' });
-    }
-
-    const decoded = verify(token, secret);
+    const decoded = verify(token, SECRET_KEY);
     req.user = decoded;
     next();
   } catch (error: any) {
     return res.status(401).json({ success: false, message: 'Invalid or expired token. Please log in again.' });
   }
+};
+
+export const optionalAuthMiddleware = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      req.user = verify(token, SECRET_KEY);
+    }
+  } catch {
+    // Token invalid — proceed without user
+  }
+  next();
 };
