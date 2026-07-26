@@ -8,12 +8,11 @@ import { connectToMongoDB } from "./database/mongo-db";
 connectToMongoDB()
   .then(() => {
     console.log("MongoDB connection established, starting server...");
+    app.listen(PORT, () => {
+      console.log(`Server running :${PORT}`);
+    });
   })
   .catch((error) => {
     console.error("Failed to connect to MongoDB, server not started.", error);
-    process.exit(1); // Exit the process with an error code
+    process.exit(1);
   });
-
-app.listen(PORT, () => {
-  console.log(`Server running :${PORT}`);
-});
