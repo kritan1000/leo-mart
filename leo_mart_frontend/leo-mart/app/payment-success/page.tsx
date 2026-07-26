@@ -6,10 +6,14 @@ import Link from "next/link";
 import { CheckCircle2, Loader2, AlertCircle, ShoppingBag, ShieldCheck } from "lucide-react";
 import { verifyKhaltiAction } from "@/lib/actions/payment-action";
 import { LeoMartLogo } from "../(auth)/_components/type/AuthComponent";
+import { useAuth } from "@/lib/context/AuthContext";
+import { useCart } from "@/lib/context/CartContext";
 
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { checkAuth } = useAuth();
+  const { clearCart } = useCart();
 
   const pidx = searchParams.get("pidx");
   const [verifying, setVerifying] = useState(true);
@@ -28,8 +32,9 @@ function PaymentSuccessContent() {
         const res = await verifyKhaltiAction(pidx);
         if (res.success && res.order) {
           setOrder(res.order);
-          // Clear cart on successful Khalti verification
-          localStorage.removeItem("leo_mart_cart");
+          clearCart();
+          // Refresh user data to update loyalty points
+          checkAuth();
         } else {
           // If verification fails, redirect to payment-failed page with message
           const reason = encodeURIComponent(res.message || "Payment verification failed");
