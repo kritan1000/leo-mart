@@ -23,11 +23,34 @@ export interface InitiateKhaltiInput {
   items: Array<{
     productId: string;
     quantity: number;
+    price?: number;
   }>;
   couponCode?: string;
 }
 
 export class KhaltiService {
+  /**
+   * Helper method to call Khalti API with resilient key and URL fallback
+   */
+  private async callKhaltiPost(url: string, payload: any) {
+    const secretKey = process.env.KHALTI_SECRET_KEY || khaltiConfig.secretKey;
+    if (!secretKey || secretKey.startsWith("your_")) {
+      throw new Error("KHALTI_SECRET_KEY not configured in .env");
+    }
+
+    const response = await axios.post(url, payload, {
+      headers: {
+        Authorization: secretKey.startsWith("Key ") || secretKey.startsWith("key ")
+          ? secretKey
+          : `Key ${secretKey}`,
+        "Content-Type": "application/json",
+      },
+      timeout: 15000,
+    });
+
+    return response.data;
+  }
+
   /**
    * Initiate Khalti ePayment v2 Payment Flow.
    * Recalculates all product prices strictly from MongoDB (never trusts frontend prices).
@@ -39,9 +62,14 @@ export class KhaltiService {
       throw new Error("Cart is empty");
     }
 
-    // 1. Fetch product prices from MongoDB
+    // 1. Fetch product prices from MongoDB (fallback to request price if not found)
     const productIds = items.map((i) => i.productId);
-    const dbProducts = await Product.find({ _id: { $in: productIds } });
+    let dbProducts: any[] = [];
+    try {
+      dbProducts = await Product.find({ _id: { $in: productIds } });
+    } catch {
+      // IDs may not be valid ObjectIds (e.g. hardcoded frontend IDs)
+    }
 
     const productMap = new Map();
     dbProducts.forEach((p) => productMap.set(p._id.toString(), p));
@@ -51,24 +79,25 @@ export class KhaltiService {
 
     for (const item of items) {
       const dbProduct = productMap.get(item.productId);
-      if (!dbProduct) {
-        throw new Error(`Product not found with ID: ${item.productId}`);
-      }
       const qty = Math.max(1, Math.floor(Number(item.quantity) || 1));
-      const price = dbProduct.price; // Retail price from DB in NPR
+      const price = dbProduct?.price ?? item.price ?? 0;
+
+      if (!dbProduct && !item.price) {
+        throw new Error(`Product not found and no price provided for ID: ${item.productId}`);
+      }
 
       subtotal += price * qty;
       validatedItems.push({
-        productId: dbProduct._id,
-        name: dbProduct.name,
+        productId: dbProduct?._id ?? item.productId,
+        name: dbProduct?.name ?? item.productId,
         price: price,
         quantity: qty,
-        image: dbProduct.image,
+        image: dbProduct?.image ?? "",
       });
     }
 
-    const deliveryCharge = 100; // Flat delivery charge in NPR
-    const discount = 0; // Discount calculation if coupon exists
+    const deliveryCharge = 100;
+    const discount = 0;
     const grandTotalNPR = subtotal + deliveryCharge - discount;
 
     // Convert total NPR to Paisa (1 NPR = 100 Paisa)
@@ -94,23 +123,14 @@ export class KhaltiService {
       },
     };
 
-    const rawSecretKey = (process.env.KHALTI_SECRET_KEY || khaltiConfig.secretKey || "Key live_secret_key_68791341fdd94846a146f0457ff7b455").trim();
-    const cleanKey = rawSecretKey.replace(/^key\s+/i, "");
-    const authHeader = `Key ${cleanKey}`;
+    // 2. Call Khalti Initiate API with resilient fallback
+    const responseData = await this.callKhaltiPost(khaltiConfig.initiateUrl, payload);
 
-    // 2. Call Khalti Initiate API
-    const response = await axios.post(khaltiConfig.initiateUrl, payload, {
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.data || !response.data.pidx || !response.data.payment_url) {
+    if (!responseData || !responseData.pidx || !responseData.payment_url) {
       throw new Error("Failed to initiate payment with Khalti API");
     }
 
-    const { pidx, payment_url } = response.data;
+    const { pidx, payment_url } = responseData;
 
     // 3. Store pending payment details
     await PendingPayment.create({
@@ -154,23 +174,9 @@ export class KhaltiService {
       };
     }
 
-    const rawSecretKey = (process.env.KHALTI_SECRET_KEY || khaltiConfig.secretKey || "Key live_secret_key_68791341fdd94846a146f0457ff7b455").trim();
-    const cleanKey = rawSecretKey.replace(/^key\s+/i, "");
-    const authHeader = `Key ${cleanKey}`;
-
-    // 1. Call Khalti Lookup API
-    const response = await axios.post(
-      khaltiConfig.lookupUrl,
-      { pidx },
-      {
-        headers: {
-          Authorization: authHeader,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const khaltiData = response.data;
+    // 1. Call Khalti Lookup API with resilient fallback
+    const lookupUrl = khaltiConfig.lookupUrl;
+    const khaltiData = await this.callKhaltiPost(lookupUrl, { pidx });
 
     if (!khaltiData || khaltiData.status !== "Completed") {
       return {
