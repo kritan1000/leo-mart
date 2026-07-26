@@ -43,12 +43,13 @@ export async function initiateKhaltiAction(data: {
     });
 
     const result = await res.json();
-    if (result.success && result.payment_url) {
+    const resData = result.data || result;
+    if (result.success && resData.payment_url) {
       return {
         success: true,
-        payment_url: result.payment_url,
-        pidx: result.pidx,
-        purchaseOrderId: result.purchaseOrderId,
+        payment_url: resData.payment_url,
+        pidx: resData.pidx,
+        purchaseOrderId: resData.purchaseOrderId,
       };
     }
 
