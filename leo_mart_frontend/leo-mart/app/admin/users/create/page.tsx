@@ -115,7 +115,7 @@ export default function CreateUserPage() {
                 type="text"
                 value={fullname}
                 onChange={(e) => setFullname(e.target.value)}
-                placeholder="e.g. John Doe"
+                placeholder="Ram Shrestha"
                 className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
               />
             </div>
@@ -128,7 +128,7 @@ export default function CreateUserPage() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="e.g. johndoe12"
+                placeholder="ramshrestha"
                 className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
               />
             </div>
@@ -141,7 +141,7 @@ export default function CreateUserPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. johndoe@gmail.com"
+                placeholder="ram@gmail.com"
                 className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
               />
             </div>
@@ -154,7 +154,7 @@ export default function CreateUserPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min 6 characters"
+                placeholder="At least 6 characters"
                 className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
               />
             </div>

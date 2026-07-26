@@ -179,7 +179,7 @@ export default function CreateProductPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Premium Basmati Rice"
+                placeholder="Tiger Basmati Rice 5kg"
                 className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
               />
             </div>
@@ -239,7 +239,7 @@ export default function CreateProductPage() {
                   type="text"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  placeholder="e.g. Royal Harvest"
+                  placeholder="Tiger"
                   className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                 />
               </div>
@@ -254,7 +254,7 @@ export default function CreateProductPage() {
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  placeholder="e.g. 1500"
+                  placeholder="650"
                   className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                 />
               </div>
@@ -288,7 +288,7 @@ export default function CreateProductPage() {
                     type="number"
                     value={minBulkQty}
                     onChange={(e) => setMinBulkQty(e.target.value)}
-                    placeholder="e.g. 20 bags"
+                    placeholder="10"
                     className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                   />
                 </div>
@@ -301,7 +301,7 @@ export default function CreateProductPage() {
                     type="number"
                     value={bulkPrice}
                     onChange={(e) => setBulkPrice(e.target.value)}
-                    placeholder="e.g. 1350"
+                    placeholder="600"
                     className="w-full border border-purple-100 px-4 py-2.5 rounded-lg text-sm text-black outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                   />
                 </div>

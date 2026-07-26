@@ -84,7 +84,7 @@ export default function LoginFormZod() {
               <input
                 id="email"
                 type="email"
-                placeholder="name@company.com"
+                placeholder="you@example.com"
                 autoComplete="email"
                 className={`w-full border pl-10 pr-4 py-2.5 text-sm rounded-xl outline-none text-black focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition ${
                   errors.email ? "border-red-400" : "border-purple-100"
