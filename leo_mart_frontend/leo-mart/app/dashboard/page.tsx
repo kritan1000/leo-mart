@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/lib/context/AuthContext";
 import { LeoMartLogo } from "../(auth)/_components/type/AuthComponent";
-import { User, LogOut, Settings, ShoppingBag, ShoppingCart, Sparkles, Building2, Star, Award, TrendingUp } from "lucide-react";
+import { User, LogOut, Settings, ShoppingBag, ShoppingCart, Sparkles, Building2, Star, Award, TrendingUp, Package } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, logout, loading } = useAuth();
@@ -54,6 +54,9 @@ export default function DashboardPage() {
             <Link href="/wholesale" className="hover:text-purple-600 transition">
               Wholesale Portal
             </Link>
+            <Link href="/dashboard/orders" className="hover:text-purple-600 transition">
+              My Orders
+            </Link>
             <Link href="/profile" className="hover:text-purple-600 transition">
               Account Settings
             </Link>
@@ -101,6 +104,13 @@ export default function DashboardPage() {
               Start Shopping
             </Link>
             <Link
+              href="/dashboard/orders"
+              className="inline-flex items-center justify-center gap-1.5 border border-purple-100 hover:border-purple-300 bg-white text-purple-600 hover:bg-purple-50/20 px-6 py-3 rounded-xl text-sm font-semibold transition active:scale-95"
+            >
+              <ShoppingBag size={16} />
+              My Orders
+            </Link>
+            <Link
               href="/profile"
               className="inline-flex items-center justify-center gap-1.5 border border-purple-100 hover:border-purple-300 bg-white text-purple-600 hover:bg-purple-50/20 px-6 py-3 rounded-xl text-sm font-semibold transition active:scale-95"
             >
@@ -113,7 +123,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* 1. Loyalty Reward Points System Card */}
           <div className="bg-white border border-purple-100/80 rounded-3xl p-6 shadow-xl shadow-purple-500/5 flex flex-col justify-between space-y-4">
@@ -153,7 +163,30 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* 2. Business Account B2B Card */}
+          {/* 2. My Orders Card */}
+          <Link
+            href="/dashboard/orders"
+            className="bg-white border border-purple-100/80 rounded-3xl p-6 shadow-xl shadow-purple-500/5 flex flex-col justify-between space-y-4 hover:shadow-purple-500/10 transition group"
+          >
+            <div className="flex gap-4">
+              <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center h-12 w-12 shrink-0">
+                <Package size={22} />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-bold text-gray-800 text-sm">My Orders</h3>
+                <span className="text-[10px] text-gray-400 block font-medium">Order History & Tracking</span>
+              </div>
+            </div>
+            
+            <div className="space-y-3 border-t border-purple-50/80 pt-4 text-xs text-gray-600">
+              <p>View all your past purchases, track delivery status, and earn loyalty points on every order.</p>
+              <span className="w-full bg-purple-50 group-hover:bg-purple-100 text-purple-700 text-center font-bold py-2 rounded-xl text-xs block transition">
+                View Order History →
+              </span>
+            </div>
+          </Link>
+
+          {/* 3. Business Account B2B Card */}
           <div className="bg-white border border-purple-100/80 rounded-3xl p-6 shadow-xl shadow-purple-500/5 flex flex-col justify-between space-y-4">
             <div className="flex gap-4">
               <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center h-12 w-12 shrink-0">
