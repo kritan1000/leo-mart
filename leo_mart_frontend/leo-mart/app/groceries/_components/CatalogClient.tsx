@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Search, ShoppingCart, User, Grid, SlidersHorizontal, Check, X, Trash2, ShoppingBag } from "lucide-react";
+import { Search, ShoppingCart, User, X } from "lucide-react";
 import { LeoMartLogo } from "../../(auth)/_components/type/AuthComponent";
+import { useCart } from "@/lib/context/CartContext";
 
 interface CatalogClientProps {
   initialProducts: any[];
@@ -17,11 +18,6 @@ interface CatalogClientProps {
   initialBrand: string;
   initialMinPrice: string;
   initialMaxPrice: string;
-}
-
-interface CartItem {
-  product: any;
-  quantity: number;
 }
 
 export default function CatalogClient({
@@ -38,6 +34,7 @@ export default function CatalogClient({
 }: CatalogClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { addToCart: addToCartContext, setIsCartOpen, cartCount } = useCart();
 
   // Search input state
   const [search, setSearch] = useState(initialSearch);
@@ -49,8 +46,6 @@ export default function CatalogClient({
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
 
   // Cart drawer state
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
@@ -115,66 +110,73 @@ export default function CatalogClient({
 
   const addToCart = (product: any) => {
     const qty = quantities[product._id] || 1;
-    setCart((prev) => {
-      const existing = prev.find((item) => item.product._id === product._id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product._id === product._id
-            ? { ...item, quantity: item.quantity + qty }
-            : item
-        );
-      }
-      return [...prev, { product, quantity: qty }];
-    });
-    // Reset quantity select
+    addToCartContext(product, qty);
     setQuantities((prev) => ({ ...prev, [product._id]: 1 }));
-    setIsCartOpen(true);
   };
 
-  const updateCartQty = (productId: string, delta: number) => {
-    setCart((prev) =>
-      prev
-        .map((item) => {
-          if (item.product._id === productId) {
-            const nextQty = item.quantity + delta;
-            return { ...item, quantity: nextQty };
-          }
-          return item;
-        })
-        .filter((item) => item.quantity > 0)
-    );
-  };
-
-  // Sync cart to localStorage whenever cart changes
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("leo_mart_cart");
-      if (saved && cart.length === 0) {
-        setCart(JSON.parse(saved));
-      }
-    } catch (e) {}
-  }, []);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("leo_mart_cart", JSON.stringify(cart));
-    } catch (e) {}
-  }, [cart]);
-
-  const removeFromCart = (productId: string) => {
-    setCart((prev) => prev.filter((item) => item.product._id !== productId));
-  };
-
-  const checkout = () => {
-    setIsCartOpen(false);
-    router.push("/checkout");
-  };
-
-  const cartTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  const categories = ["Rice & Grains", "Flour & Baking", "Lentils & Pulses", "Ready to Eat"];
-  const brands = ["Royal Harvest", "Golden Grain", "Nature's Best", "Bulk Basics"];
+  const categories = [
+    "Noodles & Pasta",
+    "Rice & Grains",
+    "Flour & Baking",
+    "Lentils & Pulses",
+    "Spices & Masala",
+    "Cooking Oil & Ghee",
+    "Tea & Coffee",
+    "Dairy Products",
+    "Beverages & Drinks",
+    "Snacks & Chips",
+    "Biscuits & Cookies",
+    "Bread & Bakery",
+    "Ready to Eat",
+    "Cleaning & Household",
+    "Personal Care",
+    "Baby Care",
+    "Dry Fruits & Nuts",
+    "Pickles & Chutneys",
+    "Sugar & Sweeteners",
+    "Salt & Condiments",
+  ];
+  const brands = [
+    "Wai Wai",
+    "Yippee",
+    "Maggi",
+    "Tiger",
+    "Krishna",
+    "Patan",
+    "Annapurna",
+    "Fortune",
+    "Amul",
+    "Eastern",
+    "Everest",
+    "Nescafe",
+    "Red Label",
+    "Real",
+    "Kissan",
+    "Chings",
+    "Haldiram",
+    "Britannia",
+    "Cadbury",
+    "Parle-G",
+    "Oreo",
+    "Lays",
+    "Kurkure",
+    "Pringles",
+    "Nanglo",
+    "Vim",
+    "Surf Excel",
+    "Harpic",
+    "Lifebuoy",
+    "Colgate",
+    "Head & Shoulders",
+    "Pampers",
+    "Johnson's",
+    "Nestle",
+    "Nature's Best",
+    "Bulk Basics",
+    "Local Fresh",
+    "Homestyle",
+    "Tata",
+  ];
 
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-black font-sans flex flex-col relative overflow-x-hidden">
@@ -201,13 +203,13 @@ export default function CatalogClient({
         <div className="flex items-center gap-8 justify-between w-full md:w-auto">
           <nav className="flex items-center gap-6 text-sm font-semibold text-gray-600">
             <Link href="/groceries" className="text-purple-600 font-semibold">
-              Categories
-            </Link>
-            <Link href="/groceries" className="hover:text-purple-600 transition">
               Groceries
             </Link>
             <Link href="/wholesale" className="hover:text-purple-600 transition">
               Bulk Orders
+            </Link>
+            <Link href="/blog" className="hover:text-purple-600 transition">
+              Blog
             </Link>
           </nav>
 
@@ -217,9 +219,9 @@ export default function CatalogClient({
               className="text-gray-600 hover:text-purple-600 transition relative p-1.5 hover:bg-purple-50 rounded-xl"
             >
               <ShoppingCart size={22} />
-              {totalCartCount > 0 && (
+              {cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-purple-600 text-white text-[9px] font-bold h-4.5 w-4.5 rounded-full flex items-center justify-center border border-white">
-                  {totalCartCount}
+                  {cartCount}
                 </span>
               )}
             </button>
@@ -404,6 +406,12 @@ export default function CatalogClient({
                         <ShoppingCart size={14} />
                         Add to Cart
                       </button>
+                      <Link
+                        href={`/groceries/${product._id}`}
+                        className="w-full text-center text-xs font-semibold text-purple-600 hover:text-purple-800 py-1 transition"
+                      >
+                        View Details
+                      </Link>
                     </div>
                   </div>
                 );
@@ -416,109 +424,6 @@ export default function CatalogClient({
           </div>
         </section>
       </div>
-
-      {/* Cart Drawer Slide-out overlay */}
-      {isCartOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 transition duration-300 flex justify-end">
-          {/* Backdrop Click */}
-          <div className="absolute inset-0" onClick={() => setIsCartOpen(false)} />
-
-          {/* Drawer content */}
-          <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between p-6 animate-in slide-in-from-right duration-300 text-black">
-            <div className="space-y-6 flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center justify-between border-b border-purple-50 pb-4">
-                <div className="flex items-center gap-2">
-                  <ShoppingCart className="text-purple-600" size={20} />
-                  <h3 className="text-lg font-bold text-gray-900">Your Shopping Cart</h3>
-                </div>
-                <button
-                  onClick={() => setIsCartOpen(false)}
-                  className="p-1 hover:bg-purple-50 rounded-lg text-gray-400 hover:text-gray-600 transition"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              {/* Cart List */}
-              <div className="flex-1 overflow-y-auto space-y-4 pr-1">
-                {cart.length > 0 ? (
-                  cart.map((item) => (
-                    <div 
-                      key={item.product._id} 
-                      className="flex items-center gap-4 bg-[#FAFAFC] border border-purple-100/50 rounded-xl p-3 shadow-inner"
-                    >
-                      <div className="w-14 h-14 bg-white border border-purple-50 rounded-lg overflow-hidden shrink-0 flex items-center justify-center">
-                        <img
-                          src={item.product.image}
-                          alt={item.product.name}
-                          className="object-cover w-full h-full"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-xs font-bold text-gray-800 truncate">{item.product.name}</h4>
-                        <span className="text-[10px] text-gray-400 block">{item.product.brand}</span>
-                        <span className="text-xs font-extrabold text-purple-700 block mt-1">
-                          Rs. {item.product.price.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-end gap-2 shrink-0">
-                        {/* Qty controls */}
-                        <div className="flex items-center border border-purple-100 rounded-lg overflow-hidden h-7 bg-white scale-90">
-                          <button
-                            onClick={() => updateCartQty(item.product._id, -1)}
-                            className="px-1.5 text-gray-500 hover:bg-purple-50 transition"
-                          >
-                            -
-                          </button>
-                          <span className="px-1.5 text-[10px] font-bold text-gray-700 min-w-[15px] text-center">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => updateCartQty(item.product._id, 1)}
-                            className="px-1.5 text-gray-500 hover:bg-purple-50 transition"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <button
-                          onClick={() => removeFromCart(item.product._id)}
-                          className="text-red-400 hover:text-red-600 transition"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-center space-y-3 py-16">
-                    <ShoppingBag className="text-purple-200" size={48} />
-                    <span className="text-sm font-semibold text-gray-400">Your cart is empty</span>
-                    <p className="text-xs text-gray-400">Add fresh groceries from the list to get started.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Cart Footer */}
-            {cart.length > 0 && (
-              <div className="border-t border-purple-50 pt-4 space-y-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500 font-medium">Grand Total</span>
-                  <span className="text-xl font-extrabold text-purple-700">
-                    Rs. {cartTotal.toLocaleString()}
-                  </span>
-                </div>
-                <button
-                  onClick={checkout}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl text-sm shadow-md shadow-purple-500/10 active:scale-95 transition flex items-center justify-center gap-1.5"
-                >
-                  Proceed to Checkout
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
