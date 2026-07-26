@@ -46,9 +46,12 @@ export class PaymentController {
       return res.status(200).json({
         success: true,
         message: "Khalti payment initiated successfully",
-        payment_url: result.payment_url,
-        pidx: result.pidx,
-        purchaseOrderId: result.purchaseOrderId,
+        data: {
+          pidx: result.pidx,
+          payment_url: result.payment_url,
+          environment: process.env.KHALTI_ENVIRONMENT || "test",
+          purchaseOrderId: result.purchaseOrderId,
+        },
       });
     } catch (error: any) {
       console.error("Khalti Initiate Error:", error.response?.data || error.message);
@@ -79,6 +82,14 @@ export class PaymentController {
         return res.status(200).json({
           success: true,
           message: result.message,
+          data: {
+            pidx: result.order?.pidx,
+            status: result.order?.paymentStatus === "Paid" ? "Completed" : "Pending",
+            transaction_id: result.order?.transactionId,
+            total_amount: result.order?.totalAmount ? Math.round(result.order.totalAmount * 100) : 0,
+            purchase_order_id: result.order?.purchaseOrderId,
+            purchase_order_name: result.order?.purchaseOrderId,
+          },
           order: result.order,
         });
       } else {
