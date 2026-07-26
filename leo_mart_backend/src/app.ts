@@ -15,10 +15,20 @@ import paymentRoutes from "./routes/payment_route";
 import orderRoutes from "./routes/order_route";
 
 const app: Application = express();
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || "http://localhost:3000")
+  .split(",")
+  .map((o) => o.trim());
 const corsOptions = {
-  origin: "*",
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 
