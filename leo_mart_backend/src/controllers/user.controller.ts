@@ -8,7 +8,6 @@ const userService = new UserService();
 export class UserController {
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log('[REGISTER] body:', req.body);
       const validated = CreateUserDto.parse(req.body);
       const result = await userService.createUser(validated);
       return res.status(201).json({
@@ -31,7 +30,6 @@ export class UserController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log('[LOGIN] body:', req.body);
       const validated = LoginUserDto.parse(req.body);
       const result = await userService.loginUser(validated);
 
@@ -194,7 +192,6 @@ export class UserController {
   async adminDeleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      // Prevent deleting self
       if (id === req.user?.id) {
         return res.status(400).json({ success: false, message: 'You cannot delete your own admin account' });
       }
@@ -209,6 +206,24 @@ export class UserController {
       });
     } catch (error) {
       console.error('[ADMIN DELETE USER ERROR]', error);
+      next(error);
+    }
+  }
+
+  async adminGetBusinessAccounts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const size = parseInt(req.query.size as string) || 10;
+      const status = (req.query.status as string) || undefined;
+
+      const result = await userService.getBusinessAccounts(page, size, status);
+      return res.status(200).json({
+        success: true,
+        message: 'Business accounts fetched successfully',
+        data: result,
+      });
+    } catch (error) {
+      console.error('[ADMIN GET BUSINESS ACCOUNTS ERROR]', error);
       next(error);
     }
   }
