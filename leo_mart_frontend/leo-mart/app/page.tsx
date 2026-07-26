@@ -1,8 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { ShoppingCart, User, ArrowRight, Star, ShieldCheck, Truck, Percent } from "lucide-react";
+import { ArrowRight, Star, ShieldCheck, Truck, Percent } from "lucide-react";
 import { fetchProductsAction } from "@/lib/actions/product-action";
-import { LeoMartLogo } from "./(auth)/_components/type/AuthComponent";
+import HomeHeader from "./_components/HomeHeader";
+import ProductCard from "./_components/ProductCard";
 
 export default async function HomePage() {
   // Fetch products dynamically from backend
@@ -11,36 +12,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-white text-black font-sans flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 py-4 px-6 md:px-12 flex items-center justify-between sticky top-0 z-50 shadow-sm shadow-purple-500/5">
-        <div className="flex items-center gap-12">
-          <Link href="/">
-            <LeoMartLogo size={28} />
-          </Link>
-          <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-gray-600">
-            <Link href="/groceries" className="hover:text-purple-600 transition">
-              Categories
-            </Link>
-            <Link href="/groceries" className="hover:text-purple-600 transition">
-              Groceries
-            </Link>
-            <Link href="/wholesale" className="hover:text-purple-600 transition">
-              Bulk Orders
-            </Link>
-            <span className="hover:text-purple-600 transition cursor-pointer">
-              Business Services
-            </span>
-          </nav>
-        </div>
-        <div className="flex items-center gap-6">
-          <Link href="/groceries" className="text-gray-600 hover:text-purple-600 transition relative">
-            <ShoppingCart size={22} />
-          </Link>
-          <Link href="/dashboard" className="text-gray-600 hover:text-purple-600 transition">
-            <User size={22} />
-          </Link>
-        </div>
-      </header>
+      <HomeHeader />
 
       {/* Hero Section */}
       <section className="relative min-h-[500px] flex items-center bg-[#FAFAFC] border-b border-purple-50 overflow-hidden">
@@ -92,60 +64,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.length > 0 ? (
             products.map((product: any) => (
-              <div 
-                key={product._id} 
-                className="group bg-white border border-purple-100/50 rounded-2xl p-4 shadow-sm hover:shadow-xl hover:shadow-purple-500/5 transition duration-300 flex flex-col justify-between relative overflow-hidden"
-              >
-                {product.stockStatus === "bulk-deal" && (
-                  <span className="absolute top-3 left-3 bg-purple-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow-sm z-10 uppercase tracking-wider">
-                    Bulk Deal
-                  </span>
-                )}
-                {product.stockStatus === "low-stock" && (
-                  <span className="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow-sm z-10 uppercase tracking-wider">
-                    Low Stock
-                  </span>
-                )}
-
-                <div className="space-y-4">
-                  {/* Image container */}
-                  <div className="w-full aspect-square bg-purple-50/10 rounded-xl overflow-hidden border border-purple-50 flex items-center justify-center relative">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="object-cover w-full h-full group-hover:scale-105 transition duration-500"
-                    />
-                  </div>
-
-                  {/* Meta data */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] text-purple-600 font-bold uppercase tracking-wider block">
-                      {product.brand} • {product.category}
-                    </span>
-                    <h3 className="font-bold text-gray-800 text-sm line-clamp-1 group-hover:text-purple-600 transition">
-                      {product.name}
-                    </h3>
-                    <p className="text-xs text-gray-400 line-clamp-2 min-h-[32px]">
-                      {product.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-purple-50 mt-4 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-gray-400 block font-medium">Price</span>
-                    <span className="text-base font-extrabold text-purple-700">
-                      Rs. {product.price.toLocaleString()}
-                    </span>
-                  </div>
-                  <Link
-                    href={`/groceries?search=${encodeURIComponent(product.name)}`}
-                    className="bg-purple-50 hover:bg-purple-100 text-purple-600 p-2 rounded-xl active:scale-95 transition"
-                  >
-                    <ShoppingCart size={18} />
-                  </Link>
-                </div>
-              </div>
+              <ProductCard key={product._id} product={product} />
             ))
           ) : (
             <div className="col-span-full py-16 text-center space-y-2 border border-dashed border-purple-100 rounded-3xl bg-purple-50/5">
@@ -190,8 +109,41 @@ export default async function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-100 py-8 px-6 md:px-12 text-center text-xs text-gray-400">
-        <p>© {new Date().getFullYear()} Leo Mart. All Rights Reserved. Pricing in Nepalese Rupees (Rs. / NPR).</p>
+      <footer className="bg-white border-t border-gray-100 py-10 px-6 md:px-12">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="space-y-3">
+            <h3 className="font-extrabold text-gray-900 text-sm">Leo Mart</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Quality groceries delivered to your door. From daily essentials to bulk business supplies.
+            </p>
+          </div>
+          <div className="space-y-3">
+            <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider">Shop</h4>
+            <div className="space-y-2">
+              <Link href="/groceries" className="block text-xs text-gray-400 hover:text-purple-600 transition">Groceries</Link>
+              <Link href="/wholesale" className="block text-xs text-gray-400 hover:text-purple-600 transition">Bulk Orders</Link>
+              <Link href="/blog" className="block text-xs text-gray-400 hover:text-purple-600 transition">Blog</Link>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider">Account</h4>
+            <div className="space-y-2">
+              <Link href="/login" className="block text-xs text-gray-400 hover:text-purple-600 transition">Login</Link>
+              <Link href="/Register" className="block text-xs text-gray-400 hover:text-purple-600 transition">Register</Link>
+              <Link href="/dashboard" className="block text-xs text-gray-400 hover:text-purple-600 transition">Dashboard</Link>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider">Contact</h4>
+            <div className="space-y-2">
+              <p className="text-xs text-gray-400">Kathmandu, Nepal</p>
+              <p className="text-xs text-gray-400">info@leomart.com</p>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto mt-8 pt-6 border-t border-gray-100 text-center text-xs text-gray-400">
+          <p>&copy; {new Date().getFullYear()} Leo Mart. All Rights Reserved. Pricing in Nepalese Rupees (Rs. / NPR).</p>
+        </div>
       </footer>
     </div>
   );
