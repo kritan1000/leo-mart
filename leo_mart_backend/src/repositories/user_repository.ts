@@ -67,6 +67,26 @@ export class UserMongoRepository implements IUserRepository {
   }
   async delete(id: string): Promise<boolean> {
     const deletedUser = await User.findByIdAndDelete(id);
-    return !!deletedUser; // return true if deleted, false if not found
+    return !!deletedUser;
+  }
+
+  async findBusinessAccounts(
+    page: number,
+    size: number,
+    status?: string
+  ): Promise<{ data: IUser[]; total: number }> {
+    const query: any = { "businessAccount.status": { $ne: "none" } };
+    if (status) {
+      query["businessAccount.status"] = status;
+    }
+
+    const skip = (page - 1) * size;
+    const total = await User.countDocuments(query);
+    const data = await User.find(query)
+      .sort({ "businessAccount.appliedAt": -1 })
+      .skip(skip)
+      .limit(size);
+
+    return { data, total };
   }
 }
