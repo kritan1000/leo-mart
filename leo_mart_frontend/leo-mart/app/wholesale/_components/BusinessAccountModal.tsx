@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { Building2, X, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import { applyBusinessAccountAction } from "@/lib/actions/auth-action";
 
@@ -38,7 +39,7 @@ export default function BusinessAccountModal({ isOpen, onClose }: Props) {
 
       if (res.success) {
         setIsSuccess(true);
-        setMessage("Your Business Account application has been submitted successfully! Our B2B team will contact you shortly.");
+        setMessage("Your Business Account application has been submitted! Our team will review it shortly.");
       } else {
         setMessage(res.message || "Failed to submit business account application.");
       }
@@ -73,9 +74,10 @@ export default function BusinessAccountModal({ isOpen, onClose }: Props) {
         </div>
 
         {message && (
-          <div className={`p-3.5 rounded-2xl text-xs font-semibold text-center border ${
+          <div className={`p-3.5 rounded-2xl text-xs font-semibold text-center border flex items-center justify-center gap-2 ${
             isSuccess ? "bg-green-50 border-green-200 text-green-700" : "bg-red-50 border-red-200 text-red-600"
           }`}>
+            {isSuccess && <CheckCircle2 size={16} className="text-green-600 shrink-0" />}
             {message}
           </div>
         )}
@@ -137,7 +139,13 @@ export default function BusinessAccountModal({ isOpen, onClose }: Props) {
             </div>
           </form>
         ) : (
-          <div className="pt-2">
+          <div className="space-y-3 pt-2">
+            <Link
+              href="/dashboard"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-2xl text-xs shadow-lg shadow-purple-500/10 transition flex items-center justify-center gap-2"
+            >
+              View Application Status
+            </Link>
             <button
               onClick={onClose}
               className="w-full border border-purple-100 text-purple-600 hover:bg-purple-50 font-bold py-3 rounded-2xl text-xs transition"
