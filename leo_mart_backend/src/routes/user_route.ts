@@ -29,5 +29,6 @@ router.post("/login", userController.login.bind(userController));
 // Protected routes
 router.get("/whoami", authMiddleware, userController.whoami.bind(userController));
 router.put("/update", authMiddleware, upload.single("profilePhoto"), userController.updateUser.bind(userController));
+router.post("/business-account", authMiddleware, userController.applyBusinessAccount.bind(userController));
 
 export default router;
