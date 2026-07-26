@@ -93,4 +93,20 @@ export class UserService {
       size,
     };
   }
+
+  async getBusinessAccounts(
+    page: number,
+    size: number,
+    status?: string
+  ): Promise<{ data: IUser[]; total: number; totalPages: number; page: number; size: number }> {
+    const { data, total } = await userRepository.findBusinessAccounts(page, size, status);
+    const totalPages = Math.ceil(total / size);
+    return {
+      data,
+      total,
+      totalPages,
+      page,
+      size,
+    };
+  }
 }
