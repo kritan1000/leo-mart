@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { OpenAIService } from "../services/openaiService";
+import { GeminiService } from "../services/geminiService";
 
-const openaiService = new OpenAIService();
+const geminiService = new GeminiService();
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -40,7 +40,7 @@ export class ChatController {
         content: msg.content,
       }));
 
-      const reply = await openaiService.chat([
+      const reply = await geminiService.chat([
         ...conversationHistory,
         { role: "user", content: sanitizedMessage },
       ]);
