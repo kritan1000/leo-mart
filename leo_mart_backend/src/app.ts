@@ -13,6 +13,7 @@ import productRoutes from "./routes/product_route";
 import quotationRoutes from "./routes/quotation_route";
 import paymentRoutes from "./routes/payment_route";
 import orderRoutes from "./routes/order_route";
+import chatRoutes from "./routes/chat_route";
 
 const app: Application = express();
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || "http://localhost:3000")
@@ -50,6 +51,7 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({ message: "Route Not Found" });

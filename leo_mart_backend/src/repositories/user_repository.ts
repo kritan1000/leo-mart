@@ -70,6 +70,13 @@ export class UserMongoRepository implements IUserRepository {
     return !!deletedUser;
   }
 
+  async findByResetToken(token: string): Promise<IUser | null> {
+    return User.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+  }
+
   async findBusinessAccounts(
     page: number,
     size: number,

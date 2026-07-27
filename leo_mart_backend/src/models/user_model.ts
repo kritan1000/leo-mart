@@ -12,6 +12,8 @@ export interface IUser extends UserType, Document {
     businessType?: string;
     appliedAt?: Date;
   };
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,6 +40,8 @@ const UserModelSchema: Schema = new Schema<IUser>(
       businessType: { type: String },
       appliedAt: { type: Date },
     },
+    passwordResetToken: { type: String, default: null },
+    passwordResetExpires: { type: Date, default: null },
   },
   {
     timestamps: true, // createdAt and updatedAt

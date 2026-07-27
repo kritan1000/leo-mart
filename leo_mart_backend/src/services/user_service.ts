@@ -5,6 +5,8 @@ import bcrypt from "bcryptjs";
 import { IUser } from "../models/user_model";
 import jwt from "jsonwebtoken";
 import { SECRET_KEY } from "../config/constant";
+import crypto from "crypto";
+import { sendEmail, passwordResetEmailTemplate } from "../utils/email";
 
 const userRepository = new UserMongoRepository();
 
@@ -108,5 +110,45 @@ export class UserService {
       page,
       size,
     };
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const user = await userRepository.findByEmail(email);
+    if (!user) {
+      throw new HttpException(404, "Email not found");
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+    await userRepository.update(user._id.toString(), {
+      passwordResetToken: hashedToken,
+      passwordResetExpires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+    } as any);
+
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: "LeoMart - Password Reset Request",
+      html: passwordResetEmailTemplate(resetUrl),
+    });
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await userRepository.findByResetToken(hashedToken);
+    if (!user) {
+      throw new HttpException(400, "Invalid or expired reset token");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await userRepository.update(user._id.toString(), {
+      password: hashedPassword,
+      passwordResetToken: null,
+      passwordResetExpires: null,
+    } as any);
   }
 }

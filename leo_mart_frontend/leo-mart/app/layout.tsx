@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/lib/context/AuthContext";
 import { CartProvider } from "@/lib/context/CartContext";
@@ -38,6 +39,7 @@ export default function RootLayout({
             {children}
           </CartProvider>
         </AuthProvider>
+        <Script src="/js/chatbot.js" strategy="lazyOnload" />
       </body>
     </html>
   );

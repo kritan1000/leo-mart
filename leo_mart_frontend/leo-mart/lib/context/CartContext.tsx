@@ -30,7 +30,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem("leo_mart_cart");
       if (saved) {
-        setCart(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        // Filter out stale/invalid cart items (e.g. after database reseed)
+        const valid = parsed.filter(
+          (item: CartItem) =>
+            item.product &&
+            item.product._id &&
+            item.product.name &&
+            typeof item.product.price === "number" &&
+            item.product.price > 0
+        );
+        if (valid.length !== parsed.length) {
+          console.warn(`Cart: removed ${parsed.length - valid.length} stale item(s)`);
+        }
+        setCart(valid);
       }
     } catch (e) {}
     setLoaded(true);

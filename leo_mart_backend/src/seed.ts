@@ -844,6 +844,22 @@ async function seed() {
     await mongoose.connect(MONGO_URI);
     console.log("Connected to MongoDB");
 
+    // Safety check: count existing products before wiping
+    const existingCount = await Product.countDocuments();
+    if (existingCount > 0) {
+      console.log(`WARNING: ${existingCount} products exist in the database.`);
+      console.log("This will DELETE all existing products and replace them with seed data.");
+      console.log("If you have uploaded products with custom images, they will be LOST.");
+      console.log("Run with --force to proceed: npx ts-node src/seed.ts --force");
+
+      const args = process.argv.slice(2);
+      if (!args.includes("--force")) {
+        console.log("Aborting. No changes made.");
+        await mongoose.disconnect();
+        process.exit(0);
+      }
+    }
+
     // Clear existing products
     await Product.deleteMany({});
     console.log("Cleared existing products");

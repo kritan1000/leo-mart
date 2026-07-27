@@ -96,6 +96,7 @@ export default function CheckoutPage() {
     const itemsPayload = cart.map((i) => ({
       productId: i.product._id,
       quantity: i.quantity,
+      price: i.product.price,
     }));
 
     try {

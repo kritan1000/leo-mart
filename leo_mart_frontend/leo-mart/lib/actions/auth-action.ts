@@ -101,3 +101,46 @@ export async function applyBusinessAccountAction(data: {
     return { success: false, message: error.message || "Network error" };
   }
 }
+
+export async function requestPasswordResetAction(email: string) {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/v1/auth/request-password-reset`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      return {
+        success: true,
+        message: result.message || "Password reset link sent successfully",
+        data: result.data,
+      };
+    }
+    return { success: false, message: result.message || "Failed to send password reset email" };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Something went wrong. Please try again." };
+  }
+}
+
+export async function resetPasswordAction(token: string, newPassword: string) {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/v1/auth/reset-password/${token}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newPassword }),
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      return {
+        success: true,
+        message: result.message || "Password has been reset successfully",
+      };
+    }
+    return { success: false, message: result.message || "Password reset failed" };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Something went wrong. Please try again." };
+  }
+}

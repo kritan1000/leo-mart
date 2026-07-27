@@ -20,6 +20,7 @@ export async function createCodOrderAction(data: {
   items: Array<{
     productId: string;
     quantity: number;
+    price?: number;
   }>;
 }) {
   try {

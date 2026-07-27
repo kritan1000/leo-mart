@@ -84,7 +84,7 @@ export default function LoginFormZod() {
               <input
                 id="email"
                 type="email"
-                placeholder="name@company.com"
+                placeholder="you@example.com"
                 autoComplete="email"
                 className={`w-full border pl-10 pr-4 py-2.5 text-sm rounded-xl outline-none text-black focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition ${
                   errors.email ? "border-red-400" : "border-purple-100"
@@ -102,13 +102,12 @@ export default function LoginFormZod() {
               <label htmlFor="password" className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Password
               </label>
-              <button
-                type="button"
-                onClick={() => alert("Please contact administrator to reset your password.")}
+              <Link
+                href="/forgot-password"
                 className="text-xs text-purple-600 hover:text-purple-800 font-semibold transition"
               >
                 Forgot password?
-              </button>
+              </Link>
             </div>
 
             <div className="relative">

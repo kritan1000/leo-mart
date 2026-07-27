@@ -19,6 +19,8 @@ import {
   Star,
   Phone,
 } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfilePage() {
   const { user, logout, loading, checkAuth, setUser } = useAuth();
@@ -104,13 +106,13 @@ export default function ProfilePage() {
           setUser(res.data);
         }
         await checkAuth();
-        setProfileMsg({ text: "Profile updated successfully!", type: "success" });
+        toast.success("Profile updated successfully!");
         setSelectedFile(null);
       } else {
-        setProfileMsg({ text: res.message || "Failed to update profile", type: "error" });
+        toast.error(res.message || "Failed to update profile");
       }
     } catch (err: any) {
-      setProfileMsg({ text: err.message || "An error occurred", type: "error" });
+      toast.error(err.message || "An error occurred");
     } finally {
       setIsSavingProfile(false);
     }
@@ -140,15 +142,15 @@ export default function ProfilePage() {
 
       const res = await updateProfile(formData);
       if (res.success) {
-        setPasswordMsg({ text: "Password updated successfully!", type: "success" });
+        toast.success("Password updated successfully!");
         setPassword("");
         setConfirmPassword("");
         await checkAuth();
       } else {
-        setPasswordMsg({ text: res.message || "Failed to update password", type: "error" });
+        toast.error(res.message || "Failed to update password");
       }
     } catch (err: any) {
-      setPasswordMsg({ text: err.message || "An error occurred", type: "error" });
+      toast.error(err.message || "An error occurred");
     } finally {
       setIsSavingPassword(false);
     }
@@ -404,10 +406,17 @@ export default function ProfilePage() {
                   "Update Password"
                 )}
               </button>
+              <Link
+                href="/forgot-password"
+                className="block text-center text-xs text-purple-600 hover:text-purple-800 font-semibold transition mt-2"
+              >
+                Forgot your password? Reset it here
+              </Link>
             </form>
           </div>
         </div>
       </main>
+      <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} />
     </div>
   );
 }

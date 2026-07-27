@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../services/user_service';
 import { CreateUserDto, LoginUserDto, AdminCreateUserDto, AdminUpdateUserDto } from '../dtos/user_dto';
 import { ZodError } from 'zod';
+import { HttpException } from '../exceptions/http-exception';
 
 const userService = new UserService();
 
@@ -260,6 +261,69 @@ export class UserController {
       });
     } catch (error) {
       console.error("[APPLY BUSINESS ACCOUNT ERROR]", error);
+      next(error);
+    }
+  }
+
+  async requestPasswordReset(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body;
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({
+          success: false,
+          message: "Email is required",
+        });
+      }
+
+      await userService.requestPasswordReset(email.trim());
+      return res.status(200).json({
+        success: true,
+        message: "Password reset link sent successfully",
+      });
+    } catch (error: any) {
+      if (error instanceof HttpException && error.status === 404) {
+        return res.status(404).json({
+          success: false,
+          message: "Email not found",
+        });
+      }
+      console.error("[REQUEST PASSWORD RESET ERROR]", error);
+      next(error);
+    }
+  }
+
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token } = req.params;
+      const { newPassword } = req.body;
+
+      if (!newPassword || typeof newPassword !== "string") {
+        return res.status(400).json({
+          success: false,
+          message: "New password is required",
+        });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: "Password must be at least 6 characters",
+        });
+      }
+
+      await userService.resetPassword(token, newPassword);
+      return res.status(200).json({
+        success: true,
+        message: "Password has been reset successfully",
+      });
+    } catch (error: any) {
+      if (error instanceof HttpException && error.status === 400) {
+        return res.status(400).json({
+          success: false,
+          message: error.message,
+        });
+      }
+      console.error("[RESET PASSWORD ERROR]", error);
       next(error);
     }
   }

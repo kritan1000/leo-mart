@@ -86,7 +86,7 @@ export default function RegisterFormZod() {
               </span>
               <input
                 type="text"
-                placeholder="John Doe"
+                placeholder="Sita Gurung"
                 className={`w-full border pl-10 pr-4 py-2.5 rounded-xl text-sm outline-none text-black focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition ${
                   errors.fullName ? "border-red-400" : "border-purple-100"
                 }`}
@@ -108,7 +108,7 @@ export default function RegisterFormZod() {
               </span>
               <input
                 type="email"
-                placeholder="name@company.com"
+                placeholder="sita@gmail.com"
                 className={`w-full border pl-10 pr-4 py-2.5 rounded-xl text-sm outline-none text-black focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition ${
                   errors.email ? "border-red-400" : "border-purple-100"
                 }`}
@@ -179,13 +179,12 @@ export default function RegisterFormZod() {
           </div>
 
           <div className="flex items-center justify-end">
-            <button
-              type="button"
-              onClick={() => alert("Please contact administrator to reset your password.")}
+            <Link
+              href="/forgot-password"
               className="text-xs text-purple-600 hover:text-purple-800 font-semibold transition"
             >
               Forgot password?
-            </button>
+            </Link>
           </div>
 
           <button
