@@ -25,6 +25,8 @@ const upload = multer({ storage });
 // Public routes
 router.post("/register", userController.register.bind(userController));
 router.post("/login", userController.login.bind(userController));
+router.post("/request-password-reset", userController.requestPasswordReset.bind(userController));
+router.post("/reset-password/:token", userController.resetPassword.bind(userController));
 
 // Protected routes
 router.get("/whoami", authMiddleware, userController.whoami.bind(userController));
