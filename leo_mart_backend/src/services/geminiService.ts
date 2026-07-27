@@ -1,8 +1,6 @@
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
 const SYSTEM_PROMPT = `You are the AI customer support assistant for LeoMart, a Nepali Grocery Marketplace. 
 Answer questions professionally, politely, and accurately. 
@@ -19,23 +17,31 @@ You can help with:
 Keep responses concise and helpful. If you don't know something specific, politely say so and suggest contacting support.`;
 
 interface ChatMessage {
-  role: "system" | "user" | "assistant";
+  role: "user" | "assistant";
   content: string;
 }
 
-export class OpenAIService {
+export class GeminiService {
   async chat(messages: ChatMessage[]): Promise<string> {
     try {
-      const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
-        max_tokens: 1024,
-        temperature: 0.7,
+      const contents = messages.map((msg) => ({
+        role: msg.role === "user" ? "user" : "model",
+        parts: [{ text: msg.content }],
+      }));
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          maxOutputTokens: 1024,
+          temperature: 0.7,
+        },
       });
 
-      return completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+      return response.text || "I'm sorry, I couldn't generate a response.";
     } catch (error: any) {
-      console.error("[OpenAI Error]", error?.message || error);
+      console.error("[Gemini Error]", error?.message || error);
       throw error;
     }
   }
