@@ -179,13 +179,12 @@ export default function RegisterFormZod() {
           </div>
 
           <div className="flex items-center justify-end">
-            <button
-              type="button"
-              onClick={() => alert("Please contact administrator to reset your password.")}
+            <Link
+              href="/forgot-password"
               className="text-xs text-purple-600 hover:text-purple-800 font-semibold transition"
             >
               Forgot password?
-            </button>
+            </Link>
           </div>
 
           <button

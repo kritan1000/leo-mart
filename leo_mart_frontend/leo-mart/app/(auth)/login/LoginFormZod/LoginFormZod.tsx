@@ -102,13 +102,12 @@ export default function LoginFormZod() {
               <label htmlFor="password" className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Password
               </label>
-              <button
-                type="button"
-                onClick={() => alert("Please contact administrator to reset your password.")}
+              <Link
+                href="/forgot-password"
                 className="text-xs text-purple-600 hover:text-purple-800 font-semibold transition"
               >
                 Forgot password?
-              </button>
+              </Link>
             </div>
 
             <div className="relative">
