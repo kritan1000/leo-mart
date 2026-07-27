@@ -20,6 +20,7 @@ export async function initiateKhaltiAction(data: {
   items: Array<{
     productId: string;
     quantity: number;
+    price?: number;
   }>;
   couponCode?: string;
 }) {
