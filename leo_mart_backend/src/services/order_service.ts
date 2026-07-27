@@ -20,6 +20,7 @@ export interface CreateCodOrderInput {
   items: Array<{
     productId: string;
     quantity: number;
+    price?: number;
   }>;
 }
 
@@ -31,9 +32,22 @@ export class OrderService {
       throw new Error("Cart items cannot be empty");
     }
 
-    // Fetch product prices strictly from MongoDB
+    // Fetch product prices strictly from MongoDB (fallback to request price if not found)
     const productIds = items.map((i) => i.productId);
-    const dbProducts = await Product.find({ _id: { $in: productIds } });
+    let dbProducts: any[] = [];
+    try {
+      dbProducts = await Product.find({ _id: { $in: productIds } });
+    } catch (err) {
+      console.error("[Order] Product lookup failed:", err);
+      for (const id of productIds) {
+        try {
+          const p = await Product.findById(id);
+          if (p) dbProducts.push(p);
+        } catch {
+          // Individual ID invalid, skip it — frontend price will be used as fallback
+        }
+      }
+    }
 
     const productMap = new Map();
     dbProducts.forEach((p) => productMap.set(p._id.toString(), p));
@@ -43,19 +57,20 @@ export class OrderService {
 
     for (const item of items) {
       const dbProduct = productMap.get(item.productId);
-      if (!dbProduct) {
-        throw new Error(`Product not found with ID: ${item.productId}`);
-      }
       const qty = Math.max(1, Math.floor(Number(item.quantity) || 1));
-      const price = dbProduct.price;
+      const price = dbProduct?.price ?? item.price ?? 0;
+
+      if (!dbProduct && !item.price) {
+        throw new Error(`Product not found and no price provided for ID: ${item.productId}`);
+      }
 
       subtotal += price * qty;
       validatedItems.push({
-        productId: dbProduct._id,
-        name: dbProduct.name,
+        productId: dbProduct?._id ?? item.productId,
+        name: dbProduct?.name ?? item.productId,
         price: price,
         quantity: qty,
-        image: dbProduct.image,
+        image: dbProduct?.image ?? "",
       });
     }
 

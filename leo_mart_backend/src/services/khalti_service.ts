@@ -67,8 +67,17 @@ export class KhaltiService {
     let dbProducts: any[] = [];
     try {
       dbProducts = await Product.find({ _id: { $in: productIds } });
-    } catch {
-      // IDs may not be valid ObjectIds (e.g. hardcoded frontend IDs)
+    } catch (err) {
+      console.error("[Khalti] Product lookup failed:", err);
+      // If the entire query fails (e.g. one bad ID poisons $in), try individual lookups
+      for (const id of productIds) {
+        try {
+          const p = await Product.findById(id);
+          if (p) dbProducts.push(p);
+        } catch {
+          // Individual ID invalid, skip it — frontend price will be used as fallback
+        }
+      }
     }
 
     const productMap = new Map();
