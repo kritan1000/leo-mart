@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/lib/context/AuthContext";
 import { CartProvider } from "@/lib/context/CartContext";
+import { ThemeProvider } from "@/lib/context/ThemeContext";
 import CartDrawer from "./_components/CartDrawer";
 
 const geistSans = Geist({
@@ -33,12 +34,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <AuthProvider>
-          <CartProvider>
-            <CartDrawer />
-            {children}
-          </CartProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <CartProvider>
+              <CartDrawer />
+              {children}
+            </CartProvider>
+          </AuthProvider>
+        </ThemeProvider>
         <Script src="/js/chatbot.js" strategy="lazyOnload" />
       </body>
     </html>
