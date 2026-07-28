@@ -303,6 +303,48 @@
   height: 18px;
 }
 
+/* Dark Mode */
+html.dark #leo-chatbot-window {
+  background: #1a1a24;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(147, 51, 234, 0.15);
+}
+html.dark #leo-chatbot-messages {
+  background: #14141c;
+}
+html.dark #leo-chatbot-messages::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+}
+html.dark .leo-welcome h4 {
+  color: #f4f4f5;
+}
+html.dark .leo-welcome p {
+  color: #a1a1aa;
+}
+html.dark .leo-welcome-icon {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(124, 58, 237, 0.2));
+}
+html.dark .leo-msg-ai .leo-msg-bubble {
+  background: #27272a;
+  color: #e4e4e7;
+  border-color: #3f3f46;
+}
+html.dark #leo-chatbot-input-area {
+  background: #1a1a24;
+  border-top-color: #27272a;
+}
+html.dark #leo-chatbot-input {
+  background: #27272a;
+  border-color: #3f3f46;
+  color: #e4e4e7;
+}
+html.dark #leo-chatbot-input:focus {
+  background: #27272a;
+  border-color: #9333ea;
+}
+html.dark #leo-chatbot-input::placeholder {
+  color: #71717a;
+}
+
 /* Mobile Responsive */
 @media (max-width: 480px) {
   #leo-chatbot-fab {
