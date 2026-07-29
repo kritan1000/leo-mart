@@ -18,7 +18,7 @@ export default async function GroceriesCatalogPage({ searchParams }: PageProps) 
   const resolvedParams = await searchParams;
 
   const page = parseInt(resolvedParams.page || "1", 10);
-  const size = parseInt(resolvedParams.size || "12", 10);
+  const size = parseInt(resolvedParams.size || "100", 10);
   const search = resolvedParams.search || "";
   const category = resolvedParams.category || "";
   const brand = resolvedParams.brand || "";

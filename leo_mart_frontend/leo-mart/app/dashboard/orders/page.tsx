@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/context/AuthContext";
+import { useCart } from "@/lib/context/CartContext";
 import { LeoMartLogo } from "../../(auth)/_components/type/AuthComponent";
 import { ShoppingCart, LogOut, Package, ChevronRight, Clock, CheckCircle2, XCircle, Truck } from "lucide-react";
 
@@ -34,6 +35,7 @@ const statusConfig: Record<string, { icon: typeof Clock; color: string; bg: stri
 
 export default function OrdersPage() {
   const { user, logout, loading: authLoading } = useAuth();
+  const { setIsCartOpen } = useCart();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -88,9 +90,9 @@ export default function OrdersPage() {
           </nav>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="/groceries" className="text-gray-600 hover:text-purple-600 transition">
+          <button onClick={() => setIsCartOpen(true)} className="text-gray-600 hover:text-purple-600 transition cursor-pointer">
             <ShoppingCart size={22} />
-          </Link>
+          </button>
           <button
             onClick={logout}
             className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 font-semibold transition cursor-pointer"

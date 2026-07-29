@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, User, Search } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
+import { useCart } from "@/lib/context/CartContext";
 import { LeoMartLogo } from "../(auth)/_components/type/AuthComponent";
 import ThemeToggle from "./ThemeToggle";
 
 export default function HomeHeader() {
   const { user, loading } = useAuth();
+  const { setIsCartOpen } = useCart();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -78,12 +80,12 @@ export default function HomeHeader() {
 
         <ThemeToggle />
 
-        <Link
-          href="/groceries"
-          className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors relative p-2 hover:bg-purple-50 dark:hover:bg-purple-950/50 rounded-xl"
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors relative p-2 hover:bg-purple-50 dark:hover:bg-purple-950/50 rounded-xl cursor-pointer"
         >
           <ShoppingCart size={20} />
-        </Link>
+        </button>
 
         {!loading && user ? (
           <Link

@@ -154,6 +154,22 @@ export default function LoginFormZod() {
             Sign up
           </Link>
         </p>
+
+        <div className="relative mt-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-purple-100"></div>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-3 text-gray-400">or</span>
+          </div>
+        </div>
+
+        <button
+          onClick={() => router.push("/")}
+          className="w-full mt-6 bg-white border border-purple-200 hover:border-purple-400 text-gray-700 py-3 rounded-xl text-sm font-semibold shadow-sm hover:shadow-md active:scale-95 transition duration-200"
+        >
+          Continue as Guest
+        </button>
       </div>
     </main>
   );
