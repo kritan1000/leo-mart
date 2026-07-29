@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ShoppingCart, User, Download, Sparkles, Building2 } from "lucide-react";
 import { LeoMartLogo } from "../../(auth)/_components/type/AuthComponent";
+import { useCart } from "@/lib/context/CartContext";
 import QuotationForm from "./QuotationForm";
 import BusinessAccountModal from "./BusinessAccountModal";
 
@@ -13,6 +14,7 @@ interface Props {
 
 export default function WholesaleClient({ products }: Props) {
   const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(false);
+  const { setIsCartOpen } = useCart();
 
   const handleDownloadCatalog = () => {
     const catalogHeader = "LEO MART WHOLESALE GROCERY CATALOG\n==================================\nAll prices in Nepalese Rupees (Rs.)\n\n";
@@ -70,9 +72,9 @@ export default function WholesaleClient({ products }: Props) {
           </nav>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="/groceries" className="text-gray-600 hover:text-purple-600 transition relative">
+          <button onClick={() => setIsCartOpen(true)} className="text-gray-600 hover:text-purple-600 transition relative cursor-pointer">
             <ShoppingCart size={22} />
-          </Link>
+          </button>
           <Link href="/dashboard" className="text-gray-600 hover:text-purple-600 transition">
             <User size={22} />
           </Link>

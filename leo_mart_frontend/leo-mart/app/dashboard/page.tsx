@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useAuth } from "@/lib/context/AuthContext";
+import { useCart } from "@/lib/context/CartContext";
 import { LeoMartLogo } from "../(auth)/_components/type/AuthComponent";
 import { User, LogOut, Settings, ShoppingBag, ShoppingCart, Sparkles, Building2, Star, Award, TrendingUp, Package } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, logout, loading } = useAuth();
+  const { setIsCartOpen } = useCart();
 
   if (loading) {
     return (
@@ -63,9 +65,9 @@ export default function DashboardPage() {
           </nav>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="/groceries" className="text-gray-600 hover:text-purple-600 transition">
+          <button onClick={() => setIsCartOpen(true)} className="text-gray-600 hover:text-purple-600 transition cursor-pointer">
             <ShoppingCart size={22} />
-          </Link>
+          </button>
           <button
             onClick={logout}
             className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 font-semibold transition cursor-pointer"
